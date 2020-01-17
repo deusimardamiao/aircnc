@@ -8,9 +8,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import { withNavigation } from 'react-navigation';
+
 import api from './../../services/api';
 
-export default function SpotList({ tech }) {
+import logo from './../../assets/logo.png';
+
+function SpotList({ tech, navigation }) {
   const [spots, setSpots] = useState([]);
 
   useEffect(() => {
@@ -22,6 +26,10 @@ export default function SpotList({ tech }) {
     }
     loadSpots();
   }, []);
+
+  function handleNavigate(id) {
+    navigation.navigate('Book', { id });
+  }
 
   return (
     <View style={styles.container}>
@@ -35,10 +43,10 @@ export default function SpotList({ tech }) {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
-            <Image style={styles.thumbnail} source={{ uri: item.thumbnail }} />
+            <Image style={styles.thumbnail} source={logo} />
             <Text style={styles.company}> {item.company} </Text>
-            <Text style={styles.price}> {item.price ? `R$${item.price}` : `GRATUITO`} </Text>
-            <TouchableOpacity style={styles.button}>
+            <Text style={styles.price}> {item.price ? `R$${item.price}/dia` : `GRATUITO`} </Text>
+            <TouchableOpacity onPress={() => handleNavigate(item._id)} style={styles.button}>
               <Text style={styles.buttonText}>Solicitar reserva</Text>
             </TouchableOpacity>
           </View>
@@ -75,7 +83,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 200,
     height: 120,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     borderRadius: 2,
   },
 
@@ -90,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#999',
     marginTop: 5,
+    marginBottom: 5,
   },
 
   button: {
@@ -106,3 +115,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default withNavigation(SpotList);

@@ -22,10 +22,7 @@ export default function Login({ navigation }) {
     useEffect(() => {
         AsyncStorage.getItem('user').then(user => {
             if (user) {
-                AsyncStorage.getItem('techs').then(storageTechs => {
-                    console.log(storageTechs);
-                })
-                // navigation.navigate('List');
+                navigation.navigate('List');
             }
         });
     }, []);
