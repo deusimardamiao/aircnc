@@ -1,64 +1,61 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import socketio from 'socket.io-client';
 import {
-  SafeAreaView,
-  AsyncStorage,
-  Text,
-  Image,
-  StyleSheet,
-  StatusBar,
-  ScrollView,
   Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Image,
+  AsyncStorage,
 } from 'react-native';
 
-import socketio from 'socket.io-client';
-
-import SpotList from './../components/SpotList';
+import SpotList from '../components/SpotList';
 
 import logo from './../assets/logo.png';
 
 export default function List() {
   const [techs, setTechs] = useState([]);
 
-  const user_id = AsyncStorage.getItem('user');
-  const socket = useMemo(() => socketio('http://10.0.0.108:3333', {
-    query: user_id,
-  }), [user_id]);
-
   useEffect(() => {
-    socket.on('booking_response', booking => {
-      console.log(booking);
-      Alert.alert(`Sua reserva em ${booking.spot.company} em ${booking.date} foi ${booking.approved ? 'APROVADA' : 'REJEITADA'}!`)
-    });
-  },[]);
+    AsyncStorage.getItem('user').then(user_id => {
+      const socket = socketio('http://10.180.43.176:3333', {
+        query: { user_id }
+      })
 
-  useEffect(() => {
-    AsyncStorage.getItem('techs').then(storageTechs => {
-      const techsArray = storageTechs.split(',').map(tech => tech.trim());
-      
-      setTechs(techsArray);
-    });
+      socket.on('booking_response', booking => {
+        Alert.alert(`Sua reserva em ${booking.spot.company} em ${booking.date} foi ${booking.approved ? 'APROVADA' : 'REJEITADA'}`);
+      })
+    })
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem('techs').then(storagedTechs => {
+      const techsArray = storagedTechs.split(',').map(tech => tech.trim());
+
+      setTechs(techsArray);
+    })
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.logo} source={logo} />
-      
+
       <ScrollView>
         {techs.map(tech => <SpotList key={tech} tech={tech} />)}
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: StatusBar.currentHeight,
     flex: 1,
   },
 
   logo: {
     height: 32,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     alignSelf: 'center',
-    marginTop: 10,
+    marginTop: 10
   },
 });

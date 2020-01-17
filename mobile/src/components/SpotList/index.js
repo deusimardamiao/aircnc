@@ -12,8 +12,6 @@ import { withNavigation } from 'react-navigation';
 
 import api from './../../services/api';
 
-import logo from './../../assets/logo.png';
-
 function SpotList({ tech, navigation }) {
   const [spots, setSpots] = useState([]);
 
@@ -22,6 +20,7 @@ function SpotList({ tech, navigation }) {
       const response = await api.get('/spots', {
         params: { tech },
       });
+      console.log(response.data);
       setSpots(response.data);
     }
     loadSpots();
@@ -43,7 +42,7 @@ function SpotList({ tech, navigation }) {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
-            <Image style={styles.thumbnail} source={logo} />
+            <Image style={styles.thumbnail} source={{ uri: `http://10.180.43.176:3333/files/${item.thumbnail}` }} />
             <Text style={styles.company}> {item.company} </Text>
             <Text style={styles.price}> {item.price ? `R$${item.price}/dia` : `GRATUITO`} </Text>
             <TouchableOpacity onPress={() => handleNavigate(item._id)} style={styles.button}>
