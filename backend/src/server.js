@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const socketio = require('socket.io');
 const http = require('http');
+require('dotenv').config();
 
 const routes = require('./routes');
 
@@ -11,7 +12,7 @@ const app = express();
 const server = http.Server(app);
 const io = socketio(server);
 
-mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-guro3.mongodb.net/semana09?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -38,4 +39,4 @@ app.use(express.json());
 app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')));
 app.use(routes);
 
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 3333);
